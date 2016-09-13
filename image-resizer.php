@@ -113,7 +113,7 @@ class Image_Resizer {
 
 		# Check for the appropriate file
 		$path = $upload_dir . '/' . $meta[ 'file' ];
-		$file = preg_replace( "~^(.+)\.(jpeg|jpg|png)$~i", "$1-$w-$h.$2", $path );
+		$file = preg_replace( "~^(.+)\.(jpeg|jpg|png)$~i", "$1-{$w}x{$h}.$2", $path );
 
 		if( ! file_exists( $file ) ) {
 			$editor = wp_get_image_editor( $path );

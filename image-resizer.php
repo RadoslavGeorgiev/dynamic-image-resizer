@@ -106,6 +106,11 @@ class Image_Resizer {
 		$w = $dims[ 4 ];
 		$h = $dims[ 5 ];
 
+		# If the image is not resized, go on
+		if( $meta[ 'width' ] == $w && $meta[ 'height' ] == $h ) {
+			return $downsize;
+		}
+
 		# Check for the appropriate file
 		$path = $upload_dir . '/' . $meta[ 'file' ];
 		$file = preg_replace( "~^(.+)\.(jpeg|jpg|png)$~i", "$1-$w-$h.$2", $path );
@@ -120,6 +125,15 @@ class Image_Resizer {
 
 				# Update the image's metadata
 				if( is_string( $size ) ) {
+					# Check if there is a size to overwrite
+					if( isset( $meta[ 'sizes' ][ $size ] ) ) {
+						$dir = dirname( $path );
+						$old = $dir . '/' . $meta[ 'sizes' ][ $size ][ 'file' ];
+
+						unlink( $old );
+					}
+
+					# Save the new size
 					$meta[ 'sizes' ][ $size ] = array(
 						'file'      => basename( $file ),
 						'width'     => $w,
@@ -139,3 +153,7 @@ class Image_Resizer {
 }
 
 new Image_Resizer();
+
+add_action( 'after_setup_theme', function(){
+	add_image_size( 'post-thumbnail', 303, 302, true );
+}, 1000);
